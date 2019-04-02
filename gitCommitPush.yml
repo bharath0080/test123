@@ -1,0 +1,33 @@
+groups: []
+resources:
+- name: test123
+  type: git
+  source:
+    branch: master
+    password: Bh@rath008
+    uri: https://github.com/bharath0080/test123.git
+    username: bharath0080
+jobs:
+- name: commit-and-push
+  plan:
+  - get: test123
+  - task: commit
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: concourse/buildroot
+          tag: git
+      run:
+        path: /bin/bash
+        args:
+        - -c
+        - |
+          set -eux
+          git clone https://github.com/bharath0080/test123.git
+          echo "new line" >> test.sh
+          git add .
+          git commit -m "Changed test.txt"
+  - put: test123  
+    params: {repository: "https://github.com/bharath0080/test123.git" }
